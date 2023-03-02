@@ -1,0 +1,35 @@
+{
+  "name": "balm-git-flow",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test:doctor": "node ./bin/balm-doctor.js",
+    "test:dev": "node ./bin/balm-dev.js",
+    "test:prod": "node ./bin/balm-prod.js",
+    "build:test": "echo 'hello'",
+    "build:prod": "echo 'world'"
+  },
+  "keywords": [
+    "git",
+    "github",
+    "gitlab",
+    "flow",
+    "workflow"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Elf-mousE",
+    "email": "ifmouz@gmail.com",
+    "url": "http://elf-mouse.me"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0",
+    "inquirer": "^9.1.4"
+  }
+}
