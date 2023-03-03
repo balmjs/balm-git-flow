@@ -2,12 +2,18 @@
 import inquirer from 'inquirer';
 import setEnvironment from '../lib/env.js';
 import { getConfig } from '../lib/config.js';
-import deployProject from '../lib/deploy.js';
+import {
+  getCurrentBranch,
+  getDevelopmentBranches,
+  deployProject
+} from '../lib/deploy.js';
 
 async function production() {
   await setEnvironment();
 
-  const releases = getConfig('releases');
+  const { main, release, releases, scripts } = getConfig();
+  const currentBranch = await getCurrentBranch();
+  const devBranches = await getDevelopmentBranches();
 
   inquirer
     .prompt([
@@ -18,13 +24,31 @@ async function production() {
         choices: releases
       },
       {
+        type: 'list',
+        name: 'devBranch',
+        message: 'Please select the branch of development:',
+        choices: devBranches,
+        when: ({ releaseBranch }) =>
+          currentBranch === main && releaseBranch === release
+      },
+      {
+        type: 'list',
+        name: 'releaseScript',
+        message: 'Please select the command of npm-run-script:',
+        default: ({ releaseBranch }) => {
+          const index = releases.indexOf(releaseBranch);
+          return scripts[index];
+        },
+        choices: scripts
+      },
+      {
         type: 'confirm',
         name: 'ok',
-        message: ({ releaseBranch }) =>
-          `Determine the release ${releaseBranch}?`
+        message: ({ releaseBranch, releaseScript }) =>
+          `Determine the release '${releaseBranch}' branch using the '${releaseScript}' command?`
       }
     ])
-    .then(({ releaseBranch, ok }) => ok && deployProject(releaseBranch));
+    .then((answers) => answers.ok && deployProject(answers));
 }
 
 production();
