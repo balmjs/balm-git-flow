@@ -39,13 +39,19 @@ async function production() {
           const index = releases.indexOf(releaseBranch);
           return scripts[index];
         },
-        choices: scripts
+        choices: scripts,
+        when: scripts.length > 1
       },
       {
         type: 'confirm',
         name: 'ok',
-        message: ({ releaseBranch, releaseScript }) =>
-          `Determine the release '${releaseBranch}' branch using the '${releaseScript}' command?`
+        message: ({ releaseBranch, releaseScript }) => {
+          let msg = `Determine the release '${releaseBranch}' branch`;
+          if (releaseScript) {
+            msg += `using the '${releaseScript}' command`;
+          }
+          return `${msg}?`;
+        }
       }
     ])
     .then((answers) => answers.ok && deployProject(answers));
