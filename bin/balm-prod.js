@@ -52,9 +52,21 @@ async function production() {
           }
           return `${msg}?`;
         }
+      },
+      {
+        type: 'input',
+        name: 'logMessage',
+        message: 'Please input the release log message'
       }
     ])
-    .then((answers) => answers.ok && deployProject(answers));
+    .then(
+      (answers) =>
+        answers.ok &&
+        deployProject({
+          currentBranch,
+          ...answers
+        })
+    );
 }
 
 production();
