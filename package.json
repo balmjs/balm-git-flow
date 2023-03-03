@@ -1,6 +1,6 @@
 {
   "name": "balm-git-flow",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "The best practices for front-end git flow",
   "keywords": [
     "frontend",
@@ -19,9 +19,10 @@
   },
   "type": "module",
   "bin": {
-    "balm-doctor": "bin/balm-doctor.js",
-    "balm-dev": "bin/balm-dev.js",
-    "balm-prod": "bin/balm-prod.js"
+    "balm-git": "bin/balm-git.js",
+    "balm-git-doctor": "bin/balm-doctor.js",
+    "balm-git-dev": "bin/balm-dev.js",
+    "balm-git-prod": "bin/balm-prod.js"
   },
   "scripts": {
     "test:doctor": "node ./bin/balm-doctor.js",
