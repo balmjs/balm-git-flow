@@ -27,6 +27,6 @@ npm install -g balm-git-flow
 
 ## Usage
 
-- `balm doctor`: check the project environment
-- `balm dev <new-branch> [<start-point>]`: create new branch for development from origin main branch
-- `balm prod`: release process
+- `balm-git doctor`: check the project environment
+- `balm-git dev <new-branch> [<start-point>]`: create new branch for development from origin main branch
+- `balm-git prod`: release process
