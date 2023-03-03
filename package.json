@@ -1,12 +1,28 @@
 {
   "name": "balm-git-flow",
   "version": "0.1.0",
-  "description": "",
-  "type": "module",
-  "main": "lib/index.js",
-  "files": [
-    "lib"
+  "description": "The best practices for front-end git flow",
+  "keywords": [
+    "frontend",
+    "git",
+    "github",
+    "gitlab",
+    "flow",
+    "workflow"
   ],
+  "homepage": "https://github.com/balmjs/balm-git-flow#readme",
+  "license": "MIT",
+  "author": {
+    "name": "Elf-mousE",
+    "email": "ifmouz@gmail.com",
+    "url": "http://elf-mouse.me"
+  },
+  "type": "module",
+  "bin": {
+    "balm-doctor": "bin/balm-doctor.js",
+    "balm-dev": "bin/balm-dev.js",
+    "balm-prod": "bin/balm-prod.js"
+  },
   "scripts": {
     "test:doctor": "node ./bin/balm-doctor.js",
     "test:dev": "node ./bin/balm-dev.js",
@@ -14,18 +30,12 @@
     "build:test": "echo 'hello'",
     "build:prod": "echo 'world'"
   },
-  "keywords": [
-    "git",
-    "github",
-    "gitlab",
-    "flow",
-    "workflow"
-  ],
-  "license": "MIT",
-  "author": {
-    "name": "Elf-mousE",
-    "email": "ifmouz@gmail.com",
-    "url": "http://elf-mouse.me"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balmjs/balm-git-flow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/balmjs/balm-git-flow/issues"
   },
   "dependencies": {
     "chalk": "^5.2.0",
