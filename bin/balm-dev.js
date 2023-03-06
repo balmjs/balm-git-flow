@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
-import chalk from 'chalk';
-import setEnvironment from '../lib/env.js';
-import { createDevBranch } from '../lib/branch.js';
+const { Command } = require('commander');
+const chalk = require('chalk');
+const { setEnvironment } = require('../lib/env.js');
+const { createDevBranch } = require('../lib/branch.js');
 
 const program = new Command();
 

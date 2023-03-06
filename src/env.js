@@ -15,7 +15,7 @@ const defaultContents = [
   `process.env.BALM_GIT_FLOW_BUILD_DIR = 'dist';`
 ];
 
-async function setEnvironment(checkEnvFile = false) {
+export async function setEnvironment(checkEnvFile = false) {
   if (fs.existsSync(balmEnvFile)) {
     await import(balmEnvFile);
     setConfig();
@@ -33,5 +33,3 @@ async function setEnvironment(checkEnvFile = false) {
     }
   }
 }
-
-export default setEnvironment;

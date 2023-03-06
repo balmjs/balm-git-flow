@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-import inquirer from 'inquirer';
-import setEnvironment from '../lib/env.js';
-import { getConfig } from '../lib/config.js';
-import {
+const inquirer = require('inquirer');
+const { setEnvironment } = require('../lib/env.js');
+const { getConfig } = require('../lib/config.js');
+const {
   getCurrentBranch,
   getDevelopmentBranches,
   deployProject
-} from '../lib/deploy.js';
+} = require('../lib/deploy.js');
 
 async function production() {
   await setEnvironment();

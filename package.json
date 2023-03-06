@@ -1,6 +1,6 @@
 {
   "name": "balm-git-flow",
-  "version": "0.2.5",
+  "version": "0.2.5-legacy",
   "description": "The best practices for front-end git flow",
   "keywords": [
     "frontend",
@@ -17,7 +17,10 @@
     "email": "ifmouz@gmail.com",
     "url": "http://elf-mouse.me"
   },
-  "type": "module",
+  "files": [
+    "bin",
+    "lib"
+  ],
   "bin": {
     "balm-git": "bin/balm-git.js",
     "balm-git-doctor": "bin/balm-doctor.js",
@@ -25,6 +28,7 @@
     "balm-git-prod": "bin/balm-prod.js"
   },
   "scripts": {
+    "build": "gulp prepublish",
     "test:doctor": "node ./bin/balm-doctor.js",
     "test:dev": "node ./bin/balm-dev.js",
     "test:prod": "node ./bin/balm-prod.js",
@@ -39,11 +43,18 @@
     "url": "https://github.com/balmjs/balm-git-flow/issues"
   },
   "dependencies": {
-    "chalk": "^5.2.0",
+    "chalk": "4",
     "commander": "^10.0.0",
-    "inquirer": "^9.1.4"
+    "inquirer": "8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "del": "^7.0.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0"
   },
   "engines": {
-    "node": ">=12.20.0"
+    "node": ">=14.18.0"
   }
 }
