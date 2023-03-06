@@ -9,6 +9,7 @@ import logger from './logger.js';
 // Define regular expression
 const reTypeOf = /(?:^\[object\s(.*?)\]$)/;
 const REGEX_STAR = /^(\*)?\s*(origin\/)?/g;
+const ENTER = '\n';
 
 const asyncExec = util.promisify(exec);
 const finished = util.promisify(stream.finished);
@@ -22,11 +23,15 @@ const getType = (any) => {
 
 export const isObject = (obj) => getType(obj) === 'object';
 
-export const parseBranchLines = (str) =>
-  str
-    .trim()
-    .split(EOL)
-    .map((line) => line.trim().replace(REGEX_STAR, ''));
+export const parseBranchLines = (str) => {
+  let branches = str.trim().split(EOL);
+
+  if (branches[0].includes(ENTER)) {
+    branches = str.trim().split(ENTER);
+  }
+
+  return branches.map((line) => line.trim().replace(REGEX_STAR, ''));
+};
 
 export async function runCommand(awesomeCommand, cmdOptions = {}) {
   const { debug, ...options } = cmdOptions;
