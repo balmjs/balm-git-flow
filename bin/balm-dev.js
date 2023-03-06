@@ -20,10 +20,10 @@ program.on('--help', () => {
   console.log('  Examples:');
   console.log();
   console.log(chalk.gray('    # create a new branch from origin main branch'));
-  console.log('    $ balm dev dev-xxx');
+  console.log('    $ balm-git dev dev-xxx');
   console.log();
   console.log(chalk.gray('    # create a new branch from custom branch'));
-  console.log('    $ balm dev dev-xxx custom-branch');
+  console.log('    $ balm-git dev dev-xxx custom-branch');
   console.log();
 });
 
