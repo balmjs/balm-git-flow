@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import setEnvironment from '../lib/env.js';
-import { checkRemoteBranch } from '../lib/branch.js';
+import { init } from '../lib/branch.js';
 
 async function doctor() {
-  await setEnvironment();
+  await setEnvironment(true);
 
-  checkRemoteBranch();
+  init();
 }
 
 doctor();
