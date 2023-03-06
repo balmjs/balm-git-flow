@@ -1,6 +1,6 @@
 {
   "name": "balm-git-flow",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The best practices for front-end git flow",
   "keywords": [
     "frontend",
@@ -42,5 +42,8 @@
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
     "inquirer": "^9.1.4"
+  },
+  "engines": {
+    "node": "^14.18.0 || ^16.0.0"
   }
 }
