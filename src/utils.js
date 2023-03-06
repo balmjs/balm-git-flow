@@ -44,7 +44,7 @@ export async function runCommand(awesomeCommand, cmdOptions = {}) {
         const { stdout } = await asyncExec(command, options || {});
         console.log(stdout);
       } catch (error) {
-        process.exit(1);
+        logger.fatal(error);
       }
     }
   } else {
