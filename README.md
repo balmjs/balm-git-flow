@@ -9,7 +9,7 @@
 
 ## Requirements
 
-1. [Node.js](https://nodejs.org/) ^14.18.0 || ^16.0.0
+1. [Node.js](https://nodejs.org/) >=12.20.0 (>=14.18.0 on Windows)
 2. [Git](https://git-scm.com/) 2.6.0+
 
 ## Installation
@@ -18,9 +18,11 @@
 npm install -g balm-git-flow
 ```
 
+> ⚠️ NOTE: For windows users, use `balm-git-flow@legacy`
+
 ## Configuration
 
-⚠️ First, create a **`balm.env.js`** file in your project root directory
+First, create a **`balm.env.js`** file in your project root directory (use `balm-git doctor`)
 
 | Variable Name           | Type     | Description                                             |
 | ----------------------- | -------- | ------------------------------------------------------- |
