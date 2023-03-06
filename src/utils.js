@@ -5,6 +5,7 @@ import stream from 'node:stream';
 import fs from 'node:fs';
 import { once } from 'node:events';
 import logger from './logger.js';
+import { isWin } from './config.js';
 
 // Define regular expression
 const reTypeOf = /(?:^\[object\s(.*?)\]$)/;
@@ -26,7 +27,7 @@ export const isObject = (obj) => getType(obj) === 'object';
 export const parseBranchLines = (str) => {
   let branches = str.trim().split(EOL);
 
-  if (branches[0].includes(ENTER)) {
+  if (isWin && branches[0].includes(ENTER)) {
     branches = str.trim().split(ENTER);
   }
 

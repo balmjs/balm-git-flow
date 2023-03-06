@@ -30,3 +30,5 @@ export function setConfig() {
 export function getConfig(key) {
   return options[key] || options;
 }
+
+export const isWin = process.platform === 'win32';

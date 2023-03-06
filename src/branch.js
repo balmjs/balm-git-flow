@@ -1,6 +1,6 @@
 import util from 'node:util';
 import { exec } from 'node:child_process';
-import { getConfig } from './config.js';
+import { getConfig, isWin } from './config.js';
 import logger from './logger.js';
 import { parseBranchLines, runCommand } from './utils.js';
 
@@ -24,7 +24,10 @@ async function createEmptyBranch(newBranch) {
 export async function init() {
   const releases = getConfig('releases');
 
-  const { error, stdout } = await asyncExec('git branch -r | grep -v HEAD');
+  const filterHeadCommand = isWin ? 'find /v "HEAD"' : 'grep -v HEAD';
+  const { error, stdout } = await asyncExec(
+    `git branch -r | ${filterHeadCommand}`
+  );
   if (error) {
     logger.fatal(error);
   }
