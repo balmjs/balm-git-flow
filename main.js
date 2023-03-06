@@ -1,1 +1,1 @@
-Hello JS 123
+Hello JS
