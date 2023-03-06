@@ -56,7 +56,7 @@ async function production() {
       {
         type: 'input',
         name: 'logMessage',
-        message: 'Please input the release log message'
+        message: 'Please input the release log message:'
       }
     ])
     .then(
