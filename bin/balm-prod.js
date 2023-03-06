@@ -40,7 +40,7 @@ async function production() {
           return scripts[index];
         },
         choices: scripts,
-        when: scripts.length > 1
+        when: scripts.length
       },
       {
         type: 'confirm',

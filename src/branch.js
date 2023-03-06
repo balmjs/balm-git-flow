@@ -12,7 +12,7 @@ async function createEmptyBranch(newBranch) {
 
   const createCommand = [
     `git checkout --orphan ${newBranch}`,
-    `git rm -rf .`,
+    'git rm -rf .',
     `git commit --allow-empty -m "Initial commit for ${newBranch}"`,
     `git push origin ${newBranch}`
   ];

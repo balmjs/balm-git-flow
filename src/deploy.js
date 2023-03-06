@@ -1,7 +1,7 @@
 import util from 'node:util';
 import { exec } from 'node:child_process';
 import path from 'node:path';
-import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig } from './config.js';
+import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig, isWin } from './config.js';
 import logger from './logger.js';
 import { parseBranchLines, runCommand } from './utils.js';
 
@@ -49,7 +49,10 @@ async function buildReleaseBranch(
   if (releaseScript) {
     const { debug, projectName, buildDir } = getConfig();
     const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
-    const cleanCommand = [`rm -rf ${releaseDir}`, `git worktree prune`];
+    const cleanCommand = [
+      isWin ? `rd /s /q ${releaseDir}` : `rm -rf ${releaseDir}`,
+      `git worktree prune`
+    ];
 
     // New worktree
     const createCommand = [
