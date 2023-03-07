@@ -1,7 +1,6 @@
 import util from 'node:util';
 import { exec } from 'node:child_process';
 import path from 'node:path';
-import del from 'del';
 import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig } from './config.js';
 import logger from './logger.js';
 import { parseBranchLines, runCommand, rm, copyDir } from './utils.js';
@@ -50,6 +49,7 @@ async function buildReleaseBranch(
   if (releaseScript) {
     const { debug, projectName, buildDir } = getConfig();
     const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
+    const targetDir = path.join(releaseDir, buildDir);
 
     // New worktree
     const createCommand = [
@@ -59,11 +59,11 @@ async function buildReleaseBranch(
       `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
     ];
     await runCommand(createCommand, { debug });
-    await rm(`${releaseDir}/*`, debug);
+    await rm(targetDir, debug);
 
     // Build
     await runCommand(`npm run ${releaseScript}`, { debug });
-    copyDir(buildDir, releaseDir, (err) => {
+    copyDir(buildDir, targetDir, (err) => {
       logger.fatal(err);
     });
 
@@ -77,7 +77,7 @@ async function buildReleaseBranch(
       `git commit -m "${LOG_MESSAGE}"`,
       `git push -f -u origin ${releaseBranch}`
     ];
-    await runCommand(releaseCommand, { cwd: releaseDir, debug });
+    await runCommand(releaseCommand, { cwd: targetDir, debug });
 
     // Clean up
     await rm(releaseDir);

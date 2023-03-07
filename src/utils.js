@@ -4,6 +4,8 @@ import { exec } from 'node:child_process';
 import stream from 'node:stream';
 import fs from 'node:fs';
 import { once } from 'node:events';
+import path from 'node:path';
+import del from 'del';
 import logger from './logger.js';
 import { isWin } from './config.js';
 
