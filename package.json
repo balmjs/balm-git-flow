@@ -45,12 +45,12 @@
   "dependencies": {
     "chalk": "4",
     "commander": "^10.0.0",
+    "del": "6",
     "inquirer": "8"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
-    "del": "^7.0.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0"
   },

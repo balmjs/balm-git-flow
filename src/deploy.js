@@ -1,9 +1,10 @@
 import util from 'node:util';
 import { exec } from 'node:child_process';
 import path from 'node:path';
-import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig, isWin } from './config.js';
+import del from 'del';
+import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig } from './config.js';
 import logger from './logger.js';
-import { parseBranchLines, runCommand } from './utils.js';
+import { parseBranchLines, runCommand, copyDir } from './utils.js';
 
 const asyncExec = util.promisify(exec);
 
@@ -40,6 +41,13 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   }
 }
 
+async function clean(debug) {
+  const deletedDir = await del(releaseDir, { force: true });
+  debug && logger.log(`Deleted dir: ${deletedDir}`);
+
+  await asyncExec('git worktree prune');
+}
+
 async function buildReleaseBranch(
   currentBranch,
   releaseBranch,
@@ -49,14 +57,12 @@ async function buildReleaseBranch(
   if (releaseScript) {
     const { debug, projectName, buildDir } = getConfig();
     const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
-    const cleanCommand = [
-      isWin ? `rd /s /q ${releaseDir}` : `rm -rf ${releaseDir}`,
-      `git worktree prune`
-    ];
+
+    // Clean up
+    await clean(debug);
 
     // New worktree
     const createCommand = [
-      ...cleanCommand,
       'git remote prune origin',
       'git pull --ff-only',
       `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
@@ -64,11 +70,10 @@ async function buildReleaseBranch(
     await runCommand(createCommand, { debug });
 
     // Build
-    const buildCommand = [
-      `npm run ${releaseScript}`,
-      `cp -rf ${buildDir}/* ${releaseDir}`
-    ];
-    await runCommand(buildCommand, { debug });
+    await runCommand(`npm run ${releaseScript}`, { debug });
+    copyDir(buildDir, releaseDir, (err) => {
+      logger.fatal(err);
+    });
 
     // Release
     const LOG_MESSAGE =
@@ -83,7 +88,7 @@ async function buildReleaseBranch(
     await runCommand(releaseCommand, { cwd: releaseDir, debug });
 
     // Clean up
-    await runCommand(cleanCommand, { debug });
+    await clean(debug);
   } else {
     logger.fatal(`Missing 'BALM_GIT_FLOW_SCRIPTS' in balm.env.js`);
   }

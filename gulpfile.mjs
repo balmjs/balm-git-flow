@@ -1,5 +1,5 @@
 import gulp from 'gulp';
-import { deleteAsync } from 'del';
+import del from 'del';
 import babel from 'gulp-babel';
 
 const { task, src, dest, series } = gulp;
@@ -8,8 +8,8 @@ const BALM_GIT_FLOW = {
   dest: 'lib'
 };
 
-async function clean() {
-  return await deleteAsync(BALM_GIT_FLOW.dest);
+function clean() {
+  return del(BALM_GIT_FLOW.dest);
 }
 
 function build() {
