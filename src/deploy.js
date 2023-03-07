@@ -56,7 +56,7 @@ async function buildReleaseBranch(
     const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
 
     // Clean up
-    clean(releaseDir);
+    clean(WORKSPACE_DIR);
 
     // New worktree
     const createCommand = [
@@ -65,7 +65,7 @@ async function buildReleaseBranch(
       `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
     ];
     await runCommand(createCommand, { debug });
-    await rm([`${releaseDir}/**`, `!${releaseDir}`], debug);
+    await rm([`${WORKSPACE_DIR}/**`, `!${WORKSPACE_DIR}`]);
 
     // Build
     await runCommand(`npm run ${releaseScript}`, { debug });
@@ -86,7 +86,7 @@ async function buildReleaseBranch(
     await runCommand(releaseCommand, { cwd: releaseDir, debug });
 
     // Clean up
-    clean(releaseDir);
+    clean(WORKSPACE_DIR);
   } else {
     logger.fatal(`Missing 'BALM_GIT_FLOW_SCRIPTS' in balm.env.js`);
   }
