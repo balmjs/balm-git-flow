@@ -49,7 +49,6 @@ async function buildReleaseBranch(
   if (releaseScript) {
     const { debug, projectName, buildDir } = getConfig();
     const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
-    const targetDir = path.join(releaseDir, buildDir);
 
     // New worktree
     const createCommand = [
@@ -59,11 +58,11 @@ async function buildReleaseBranch(
       `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
     ];
     await runCommand(createCommand, { debug });
-    await rm(targetDir, debug);
+    await rm([`${releaseDir}/**`, `!${releaseDir}`], debug);
 
     // Build
     await runCommand(`npm run ${releaseScript}`, { debug });
-    copyDir(buildDir, targetDir, (err) => {
+    copyDir(buildDir, releaseDir, (err) => {
       logger.fatal(err);
     });
 
@@ -77,7 +76,7 @@ async function buildReleaseBranch(
       `git commit -m "${LOG_MESSAGE}"`,
       `git push -f -u origin ${releaseBranch}`
     ];
-    await runCommand(releaseCommand, { cwd: targetDir, debug });
+    await runCommand(releaseCommand, { cwd: releaseDir, debug });
 
     // Clean up
     await rm(releaseDir);

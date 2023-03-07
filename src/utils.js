@@ -72,8 +72,8 @@ export async function writeIterableToFile(iterable, filePath) {
 }
 
 export async function rm(dir, debug) {
-  const deletedDir = await del(dir, { force: true });
-  debug && logger.log(`Deleted dir: ${deletedDir}`);
+  await del(dir, { force: true });
+  debug && logger.log(`Deleted dir: ${dir}`);
 }
 
 /**
