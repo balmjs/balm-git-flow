@@ -14,6 +14,15 @@ export async function getCurrentBranch() {
   return currentBranch;
 }
 
+export async function getCurrentCommitId(currentBranch) {
+  const { stdout } = await asyncExec(
+    `git log -1 --pretty=format:%h ${currentBranch}`
+  );
+  const currentCommitId = stdout.trim();
+
+  return currentCommitId;
+}
+
 async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   const { debug, main, release } = getConfig();
 
@@ -74,9 +83,10 @@ async function buildReleaseBranch(
     });
 
     // Release
+    const commitId = await getCurrentCommitId(currentBranch);
     const LOG_MESSAGE =
       logMessage ||
-      `build ${projectName} from ${currentBranch} as of $(git log '--format=format:%H' ${currentBranch} -1)`;
+      `build ${projectName} from ${currentBranch} as of ${commitId}`;
     const releaseCommand = [
       'git status',
       'git add -A',
