@@ -40,6 +40,11 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   }
 }
 
+async function clean(releaseDir) {
+  await rm(releaseDir);
+  await asyncExec('git worktree prune');
+}
+
 async function buildReleaseBranch(
   currentBranch,
   releaseBranch,
@@ -50,9 +55,11 @@ async function buildReleaseBranch(
     const { debug, projectName, buildDir } = getConfig();
     const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
 
+    // Clean up
+    clean(releaseDir);
+
     // New worktree
     const createCommand = [
-      'git worktree prune',
       'git remote prune origin',
       'git pull --ff-only',
       `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
@@ -79,8 +86,7 @@ async function buildReleaseBranch(
     await runCommand(releaseCommand, { cwd: releaseDir, debug });
 
     // Clean up
-    await rm(releaseDir);
-    await asyncExec('git worktree prune');
+    clean(releaseDir);
   } else {
     logger.fatal(`Missing 'BALM_GIT_FLOW_SCRIPTS' in balm.env.js`);
   }
