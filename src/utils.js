@@ -69,6 +69,11 @@ export async function writeIterableToFile(iterable, filePath) {
   await finished(writable);
 }
 
+export async function rm(dir, debug) {
+  const deletedDir = await del(dir, { force: true });
+  debug && logger.log(`Deleted dir: ${deletedDir}`);
+}
+
 /**
  * 复制文件夹到目标文件夹
  * @param {string} src 源目录

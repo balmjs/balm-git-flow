@@ -4,7 +4,7 @@ import path from 'node:path';
 import del from 'del';
 import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig } from './config.js';
 import logger from './logger.js';
-import { parseBranchLines, runCommand, copyDir } from './utils.js';
+import { parseBranchLines, runCommand, rm, copyDir } from './utils.js';
 
 const asyncExec = util.promisify(exec);
 
@@ -41,13 +41,6 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   }
 }
 
-async function clean(debug) {
-  const deletedDir = await del(releaseDir, { force: true });
-  debug && logger.log(`Deleted dir: ${deletedDir}`);
-
-  await asyncExec('git worktree prune');
-}
-
 async function buildReleaseBranch(
   currentBranch,
   releaseBranch,
@@ -58,16 +51,15 @@ async function buildReleaseBranch(
     const { debug, projectName, buildDir } = getConfig();
     const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
 
-    // Clean up
-    await clean(debug);
-
     // New worktree
     const createCommand = [
+      'git worktree prune',
       'git remote prune origin',
       'git pull --ff-only',
       `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
     ];
     await runCommand(createCommand, { debug });
+    await rm(`${releaseDir}/*`, debug);
 
     // Build
     await runCommand(`npm run ${releaseScript}`, { debug });
@@ -80,15 +72,16 @@ async function buildReleaseBranch(
       logMessage ||
       `build ${projectName} from ${currentBranch} as of $(git log '--format=format:%H' ${currentBranch} -1)`;
     const releaseCommand = [
-      `git status`,
-      `git add -A`,
+      'git status',
+      'git add -A',
       `git commit -m "${LOG_MESSAGE}"`,
-      `git push -u origin ${releaseBranch}`
+      `git push -f -u origin ${releaseBranch}`
     ];
     await runCommand(releaseCommand, { cwd: releaseDir, debug });
 
     // Clean up
-    await clean(debug);
+    await rm(releaseDir);
+    await asyncExec('git worktree prune');
   } else {
     logger.fatal(`Missing 'BALM_GIT_FLOW_SCRIPTS' in balm.env.js`);
   }
