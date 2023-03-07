@@ -86,7 +86,7 @@ async function buildReleaseBranch(
     const commitId = await getCurrentCommitId(currentBranch);
     const LOG_MESSAGE =
       logMessage ||
-      `build ${projectName} from ${currentBranch} as of ${commitId}`;
+      `build: ${projectName} from ${currentBranch} as of ${commitId}`;
     const releaseCommand = [
       'git status',
       'git add -A',
