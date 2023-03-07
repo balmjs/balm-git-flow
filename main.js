@@ -1,1 +1,1 @@
-Hello JS
+console.log('gg');
