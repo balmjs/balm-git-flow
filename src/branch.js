@@ -21,19 +21,28 @@ async function createEmptyBranch(newBranch) {
   await asyncExec(`git checkout ${currentBranch}`);
 }
 
-export async function init() {
-  const releases = getConfig('releases');
-
-  const filterHeadCommand = isWin ? 'find /v "HEAD"' : 'grep -v HEAD';
+async function getRemoteBranches(filterHeadCommand) {
   const { error, stdout } = await asyncExec(
     `git branch -r | ${filterHeadCommand}`
   );
   if (error) {
     logger.fatal(error);
   }
+  return stdout;
+}
 
-  if (stdout) {
-    const branches = parseBranchLines(stdout);
+export async function init() {
+  const releases = getConfig('releases');
+
+  let result;
+  try {
+    result = await getRemoteBranches('grep -v HEAD');
+  } catch (e) {
+    result = await getRemoteBranches('find /v "HEAD"');
+  }
+
+  if (result) {
+    const branches = parseBranchLines(result);
 
     let isOK = true;
     for await (const releaseBranch of releases) {
