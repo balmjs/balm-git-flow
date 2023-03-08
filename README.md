@@ -38,3 +38,5 @@ First, create a **`balm.env.js`** file in your project root directory (use `balm
 - `balm-git doctor`: check the project environment
 - `balm-git dev <new-branch> [<start-point>]`: create new branch for development from origin main branch
 - `balm-git prod`: release process
+
+> NOTE: For windows users, use `balm-git-doctor`, `balm-git-dev` and `balm-git-prod`
