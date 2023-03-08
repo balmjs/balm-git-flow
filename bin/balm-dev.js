@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { argv } from 'node:process';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import setEnvironment from '../lib/env.js';
@@ -28,9 +29,10 @@ program.on('--help', () => {
 });
 
 function help() {
-  program.parse(process.argv);
+  program.parse(argv);
   if (program.args.length < 1) return program.help();
 }
+
 help();
 
 /**
@@ -39,8 +41,7 @@ help();
 async function development() {
   await setEnvironment();
 
-  const newBranch = program.args[0];
-  const startPoint = program.args[1] || '';
+  const [newBranch, startPoint] = program.args;
   createDevBranch(newBranch, startPoint);
 }
 

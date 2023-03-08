@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { createRequire } from 'node:module';
+import { argv } from 'node:process';
 import { Command } from 'commander';
 
 const requireModule = createRequire(import.meta.url);
 const pkg = requireModule('../package.json');
 const program = new Command();
-
 const version = `balm-git-flow: ${pkg.version}`;
 
 program
@@ -15,4 +15,4 @@ program
   .command('dev', 'create new branch for development from origin main branch')
   .command('prod', 'release process');
 
-program.parse(process.argv);
+program.parse(argv);

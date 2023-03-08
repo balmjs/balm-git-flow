@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import setEnvironment from '../lib/env.js';
 
-async function doctor() {
-  await setEnvironment(true);
+function doctor() {
+  setEnvironment(true);
 }
 
 doctor();
