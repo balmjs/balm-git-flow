@@ -4,7 +4,6 @@ import setEnvironment from '../lib/env.js';
 import { getConfig } from '../lib/config.js';
 import { getCurrentBranch, getDevelopmentBranches } from '../lib/cmd.js';
 import deployProject from '../lib/deploy.js';
-import logger from '../lib/logger.js';
 
 async function production() {
   await setEnvironment();
