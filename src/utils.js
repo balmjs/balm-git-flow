@@ -3,6 +3,7 @@ import util from 'node:util';
 import stream from 'node:stream';
 import fs from 'node:fs';
 import { once } from 'node:events';
+import path from 'node:path';
 import del from 'del';
 
 // Define regular expression

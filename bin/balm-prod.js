@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 const inquirer = require('inquirer');
-const setEnvironment = require('../lib/env.js');
+const { setEnvironment } = require('../lib/env.js');
 const { getConfig } = require('../lib/config.js');
 const { getCurrentBranch, getDevelopmentBranches } = require('../lib/cmd.js');
-const deployProject = require('../lib/deploy.js');
+const { deployProject } = require('../lib/deploy.js');
 
 async function production() {
   await setEnvironment();

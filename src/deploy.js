@@ -81,7 +81,7 @@ async function buildReleaseBranch(
   clean(WORKSPACE_DIR);
 }
 
-async function deployProject({
+export async function deployProject({
   currentBranch,
   releaseBranch,
   releaseScript,
@@ -96,5 +96,3 @@ async function deployProject({
     logMessage
   );
 }
-
-export default deployProject;

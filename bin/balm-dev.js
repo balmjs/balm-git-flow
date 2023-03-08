@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { Command } = require('commander');
 const chalk = require('chalk');
-const setEnvironment = require('../lib/env.js');
+const { setEnvironment } = require('../lib/env.js');
 const { createDevBranch } = require('../lib/branch.js');
 
 const program = new Command();
