@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-const { setEnvironment } = require('../lib/env.js');
+const setEnvironment = require('../lib/env.js');
 
-async function doctor() {
-  await setEnvironment(true);
+function doctor() {
+  setEnvironment(true);
 }
 
 doctor();

@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 const inquirer = require('inquirer');
-const { setEnvironment } = require('../lib/env.js');
+const setEnvironment = require('../lib/env.js');
 const { getConfig } = require('../lib/config.js');
-const {
-  getCurrentBranch,
-  getDevelopmentBranches,
-  deployProject
-} = require('../lib/deploy.js');
+const { getCurrentBranch, getDevelopmentBranches } = require('../lib/cmd.js');
+const deployProject = require('../lib/deploy.js');
 
 async function production() {
   await setEnvironment();
@@ -39,8 +36,7 @@ async function production() {
           const index = releases.indexOf(releaseBranch);
           return scripts[index];
         },
-        choices: scripts,
-        when: scripts.length
+        choices: scripts
       },
       {
         type: 'confirm',
@@ -48,7 +44,7 @@ async function production() {
         message: ({ releaseBranch, releaseScript }) => {
           let msg = `Determine the release '${releaseBranch}' branch`;
           if (releaseScript) {
-            msg += `using the '${releaseScript}' command`;
+            msg += ` using the '${releaseScript}' command`;
           }
           return `${msg}?`;
         }

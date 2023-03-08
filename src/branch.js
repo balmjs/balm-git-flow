@@ -1,52 +1,40 @@
-import util from 'node:util';
-import { exec } from 'node:child_process';
-import { getConfig, isWin } from './config.js';
+import { getConfig } from './config.js';
+import {
+  execCommand,
+  runCommands,
+  getCurrentBranch,
+  getRemoteBranches
+} from './cmd.js';
 import logger from './logger.js';
-import { parseBranchLines, runCommand } from './utils.js';
-
-const asyncExec = util.promisify(exec);
 
 async function createEmptyBranch(newBranch) {
-  const { stdout } = await asyncExec('git branch');
-  const [currentBranch] = parseBranchLines(stdout);
+  const currentBranch = await getCurrentBranch();
 
-  const createCommand = [
+  const createCommands = [
     `git checkout --orphan ${newBranch}`,
     'git rm -rf .',
     `git commit --allow-empty -m "Initial commit for ${newBranch}"`,
     `git push origin ${newBranch}`
   ];
-  await runCommand(createCommand);
+  await runCommands(createCommands);
 
-  await asyncExec(`git checkout ${currentBranch}`);
-}
-
-async function getRemoteBranches(filterHeadCommand) {
-  const { error, stdout } = await asyncExec(
-    `git branch -r | ${filterHeadCommand}`
-  );
-  if (error) {
-    logger.fatal(error);
-  }
-  return stdout;
+  execCommand(`git checkout ${currentBranch}`);
 }
 
 export async function init() {
-  const releases = getConfig('releases');
-
-  let result;
+  let remoteBranches;
   try {
-    result = await getRemoteBranches('grep -v HEAD');
+    remoteBranches = await getRemoteBranches('grep -v HEAD');
   } catch (e) {
-    result = await getRemoteBranches('find /v "HEAD"');
+    remoteBranches = await getRemoteBranches('find /v "HEAD"');
   }
 
-  if (result) {
-    const branches = parseBranchLines(result);
-
+  if (remoteBranches) {
+    const releases = getConfig('releases');
     let isOK = true;
+
     for await (const releaseBranch of releases) {
-      if (!branches.includes(releaseBranch)) {
+      if (!remoteBranches.includes(releaseBranch)) {
         isOK = false;
         logger.log(`Missing branch: '${releaseBranch}'`);
         await createEmptyBranch(releaseBranch);
@@ -62,8 +50,5 @@ export async function createDevBranch(newBranch, startPoint) {
   const main = getConfig('main');
   startPoint = startPoint || `origin/${main}`;
 
-  const { error } = asyncExec(`git checkout -b ${newBranch} ${startPoint}`);
-  if (error) {
-    logger.fatal(error);
-  }
+  execCommand(`git checkout -b ${newBranch} ${startPoint}`);
 }

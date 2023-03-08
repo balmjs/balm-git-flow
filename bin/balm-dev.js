@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { Command } = require('commander');
 const chalk = require('chalk');
-const { setEnvironment } = require('../lib/env.js');
+const setEnvironment = require('../lib/env.js');
 const { createDevBranch } = require('../lib/branch.js');
 
 const program = new Command();
@@ -31,6 +31,7 @@ function help() {
   program.parse(process.argv);
   if (program.args.length < 1) return program.help();
 }
+
 help();
 
 /**
@@ -39,8 +40,7 @@ help();
 async function development() {
   await setEnvironment();
 
-  const newBranch = program.args[0];
-  const startPoint = program.args[1] || '';
+  const [newBranch, startPoint] = program.args;
   createDevBranch(newBranch, startPoint);
 }
 

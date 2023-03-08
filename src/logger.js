@@ -1,4 +1,5 @@
 import { format } from 'node:util';
+import { exit } from 'node:process';
 import chalk from 'chalk';
 
 /**
@@ -29,7 +30,7 @@ function fatal(...args) {
   if (args[0] instanceof Error) args[0] = args[0].message.trim();
   const msg = format.apply(format, args);
   console.log(chalk.red(prefix), sep, msg);
-  process.exit(1);
+  exit(1);
 }
 
 /**

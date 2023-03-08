@@ -3,7 +3,6 @@ const { Command } = require('commander');
 const pkg = require('../package.json');
 
 const program = new Command();
-
 const version = `balm-git-flow: ${pkg.version}`;
 
 program

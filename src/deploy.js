@@ -1,27 +1,9 @@
-import util from 'node:util';
-import { exec } from 'node:child_process';
 import path from 'node:path';
+import { cwd } from 'node:process';
 import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig } from './config.js';
+import { runCommands, getCurrentCommitId } from './cmd.js';
 import logger from './logger.js';
-import { parseBranchLines, runCommand, rm, copyDir } from './utils.js';
-
-const asyncExec = util.promisify(exec);
-
-export async function getCurrentBranch() {
-  const { stdout } = await asyncExec('git symbolic-ref --short -q HEAD');
-  const currentBranch = stdout.trim();
-
-  return currentBranch;
-}
-
-export async function getCurrentCommitId(currentBranch) {
-  const { stdout } = await asyncExec(
-    `git log -1 --pretty=format:%h ${currentBranch}`
-  );
-  const currentCommitId = stdout.trim();
-
-  return currentCommitId;
-}
+import { rm, copyDir } from './utils.js';
 
 async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   const { debug, main, release } = getConfig();
@@ -32,13 +14,14 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
 
       if (devBranch) {
         try {
-          await runCommand(`git merge --no-ff origin/${devBranch}`, {
-            debug
+          await runCommands(`git merge --no-ff origin/${devBranch}`, {
+            debug,
+            justRun: true
           });
         } catch (e) {
-          await runCommand(`git merge --no-ff ${devBranch}`, { debug });
+          await runCommands(`git merge --no-ff ${devBranch}`, { debug });
         } finally {
-          await runCommand(`git push origin ${main}`, { debug });
+          await runCommands(`git push origin ${main}`, { debug });
         }
       }
     } else {
@@ -51,7 +34,7 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
 
 async function clean(releaseDir) {
   await rm(releaseDir);
-  await asyncExec('git worktree prune');
+  await runCommands('git worktree prune');
 }
 
 async function buildReleaseBranch(
@@ -60,49 +43,45 @@ async function buildReleaseBranch(
   releaseScript,
   logMessage
 ) {
-  if (releaseScript) {
-    const { debug, projectName, buildDir } = getConfig();
-    const releaseDir = path.join(process.cwd(), WORKSPACE_DIR);
+  const { debug, projectName, buildDir } = getConfig();
+  const releaseDir = path.join(cwd(), WORKSPACE_DIR);
 
-    // Clean up
-    clean(WORKSPACE_DIR);
+  // Clean up
+  clean(WORKSPACE_DIR);
 
-    // New worktree
-    const createCommand = [
-      'git remote prune origin',
-      'git pull --ff-only',
-      `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
-    ];
-    await runCommand(createCommand, { debug });
-    await rm([`${WORKSPACE_DIR}/**`, `!${WORKSPACE_DIR}`]);
+  // New worktree
+  const createCommands = [
+    'git remote prune origin',
+    'git pull --ff-only',
+    `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
+  ];
+  await runCommands(createCommands, { debug });
+  await rm([`${WORKSPACE_DIR}/**`, `!${WORKSPACE_DIR}`]);
 
-    // Build
-    await runCommand(`npm run ${releaseScript}`, { debug });
-    copyDir(buildDir, releaseDir, (err) => {
-      logger.fatal(err);
-    });
+  // Build
+  await runCommands(`npm run ${releaseScript}`, { debug });
+  copyDir(buildDir, releaseDir, (err) => {
+    logger.fatal(err);
+  });
 
-    // Release
-    const commitId = await getCurrentCommitId(currentBranch);
-    const LOG_MESSAGE =
-      logMessage ||
-      `build: ${projectName} from ${currentBranch} as of ${commitId}`;
-    const releaseCommand = [
-      'git status',
-      'git add -A',
-      `git commit -m "${LOG_MESSAGE}"`,
-      `git push -f -u origin ${releaseBranch}`
-    ];
-    await runCommand(releaseCommand, { cwd: releaseDir, debug });
+  // Release
+  const commitId = await getCurrentCommitId(currentBranch);
+  const LOG_MESSAGE =
+    logMessage ||
+    `build: ${projectName} from ${currentBranch} as of ${commitId}`;
+  const releaseCommand = [
+    'git status',
+    'git add -A',
+    `git commit -m "${LOG_MESSAGE}"`,
+    `git push -f -u origin ${releaseBranch}`
+  ];
+  await runCommands(releaseCommand, { debug, cwd: releaseDir });
 
-    // Clean up
-    clean(WORKSPACE_DIR);
-  } else {
-    logger.fatal(`Missing 'BALM_GIT_FLOW_SCRIPTS' in balm.env.js`);
-  }
+  // Clean up
+  clean(WORKSPACE_DIR);
 }
 
-export async function deployProject({
+async function deployProject({
   currentBranch,
   releaseBranch,
   releaseScript,
@@ -118,14 +97,4 @@ export async function deployProject({
   );
 }
 
-export async function getDevelopmentBranches() {
-  const { main, releases } = getConfig();
-
-  const { stdout } = await asyncExec('git branch');
-  let localBranches = parseBranchLines(stdout).filter(
-    (branch) => !(branch === main || releases.includes(branch))
-  );
-  localBranches.unshift(NO_NEED_TO_MERGE);
-
-  return localBranches;
-}
+export default deployProject;
