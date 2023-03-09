@@ -47,7 +47,7 @@ async function buildReleaseBranch(
   const releaseDir = path.join(cwd(), WORKSPACE_DIR);
 
   // Clean up
-  clean(WORKSPACE_DIR);
+  await clean(WORKSPACE_DIR);
 
   // New worktree
   const createCommands = [
@@ -78,7 +78,7 @@ async function buildReleaseBranch(
   await runCommands(releaseCommand, { debug, cwd: releaseDir });
 
   // Clean up
-  clean(WORKSPACE_DIR);
+  await clean(WORKSPACE_DIR);
 }
 
 export async function deployProject({

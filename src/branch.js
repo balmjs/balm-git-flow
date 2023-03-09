@@ -7,18 +7,15 @@ import {
 } from './cmd.js';
 import logger from './logger.js';
 
-async function createEmptyBranch(newBranch) {
-  const currentBranch = await getCurrentBranch();
-
+async function createEmptyBranch(newBranch, currentBranch) {
   const createCommands = [
     `git checkout --orphan ${newBranch}`,
     'git rm -rf .',
     `git commit --allow-empty -m "Initial commit for ${newBranch}"`,
-    `git push origin ${newBranch}`
+    `git push origin ${newBranch}`,
+    `git checkout ${currentBranch}`
   ];
   await runCommands(createCommands);
-
-  execCommand(`git checkout ${currentBranch}`);
 }
 
 export async function init() {
@@ -30,6 +27,7 @@ export async function init() {
   }
 
   if (remoteBranches) {
+    const currentBranch = await getCurrentBranch();
     const releases = getConfig('releases');
     let isOK = true;
 
@@ -37,7 +35,7 @@ export async function init() {
       if (!remoteBranches.includes(releaseBranch)) {
         isOK = false;
         logger.log(`Missing branch: '${releaseBranch}'`);
-        await createEmptyBranch(releaseBranch);
+        await createEmptyBranch(releaseBranch, currentBranch);
       }
     }
 
@@ -50,5 +48,5 @@ export async function createDevBranch(newBranch, startPoint) {
   const main = getConfig('main');
   startPoint = startPoint || `origin/${main}`;
 
-  execCommand(`git checkout -b ${newBranch} ${startPoint}`);
+  await execCommand(`git checkout -b ${newBranch} ${startPoint}`);
 }
