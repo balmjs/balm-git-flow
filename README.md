@@ -18,7 +18,7 @@
 npm install -g balm-git-flow
 ```
 
-> ⚠️ NOTE: For windows users, use `balm-git-flow@legacy`
+> ⚠️ NOTE: For Windows users, use `npm install -g balm-git-flow@legacy`
 
 ## Configuration
 
@@ -26,7 +26,6 @@ First, create a **`balm.env.js`** file in your project root directory (use `balm
 
 | Variable Name           | Type     | Description                                             |
 | ----------------------- | -------- | ------------------------------------------------------- |
-| BALM_GIT_FLOW_NAME      | `string` | project name                                            |
 | BALM_GIT_FLOW_MAIN      | `string` | main branch                                             |
 | BALM_GIT_FLOW_RELEASE   | `string` | production release branch                               |
 | BALM_GIT_FLOW_RELEASES  | `array`  | all release branches                                    |
@@ -39,4 +38,4 @@ First, create a **`balm.env.js`** file in your project root directory (use `balm
 - `balm-git dev <new-branch> [<start-point>]`: create new branch for development from origin main branch
 - `balm-git prod`: release process
 
-> NOTE: For windows users, use `balm-git-doctor`, `balm-git-dev` and `balm-git-prod`
+> ⚠️ NOTE: For Windows users, use `balm-git-doctor`, `balm-git-dev` and `balm-git-prod`
