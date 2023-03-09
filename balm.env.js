@@ -1,5 +1,4 @@
 // process.env.BALM_GIT_FLOW_DEBUG = true;
-process.env.BALM_GIT_FLOW_NAME = 'HelloWorld';
 process.env.BALM_GIT_FLOW_MAIN = 'legacy';
 process.env.BALM_GIT_FLOW_RELEASE = 'release';
 process.env.BALM_GIT_FLOW_RELEASES = ['test', 'release'];

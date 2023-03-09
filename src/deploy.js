@@ -43,7 +43,7 @@ async function buildReleaseBranch(
   releaseScript,
   logMessage
 ) {
-  const { debug, projectName, buildDir } = getConfig();
+  const { debug, buildDir } = getConfig();
   const releaseDir = path.join(cwd(), WORKSPACE_DIR);
 
   // Clean up
@@ -68,7 +68,7 @@ async function buildReleaseBranch(
   const commitId = await getCurrentCommitId(currentBranch);
   const LOG_MESSAGE =
     logMessage ||
-    `build: ${projectName} from ${currentBranch} as of ${commitId}`;
+    `build: ${releaseBranch} from ${currentBranch} as of ${commitId}`;
   const releaseCommand = [
     'git status',
     'git add -A',
