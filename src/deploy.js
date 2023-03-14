@@ -1,12 +1,23 @@
-import path from 'node:path';
-import { cwd } from 'node:process';
-import { WORKSPACE_DIR, NO_NEED_TO_MERGE, getConfig } from './config.js';
-import { runCommands, getCurrentCommitId } from './cmd.js';
+import {
+  RELEASE_DIR,
+  releaseDir,
+  getConfig,
+  NO_NEED_TO_MERGE
+} from './config.js';
+import { runCommands, clean, checkStatus, getCurrentCommitId } from './cmd.js';
 import logger from './logger.js';
 import { rm, copyDir } from './utils.js';
 
 async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   const { debug, main, release } = getConfig();
+
+  const hasUncommitted = await checkStatus();
+  if (hasUncommitted) {
+    await runCommands('git stash');
+    logger.log(
+      `You can use 'git stash pop' to restore the latest status after release completed`
+    );
+  }
 
   if (releaseBranch === release) {
     if (currentBranch === main) {
@@ -32,11 +43,6 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   }
 }
 
-async function clean(releaseDir) {
-  await rm(releaseDir);
-  await runCommands('git worktree prune');
-}
-
 async function buildReleaseBranch(
   currentBranch,
   releaseBranch,
@@ -44,10 +50,9 @@ async function buildReleaseBranch(
   logMessage
 ) {
   const { debug, buildDir } = getConfig();
-  const releaseDir = path.join(cwd(), WORKSPACE_DIR);
 
   // Clean up
-  await clean(WORKSPACE_DIR);
+  await clean('Start building');
 
   // New worktree
   const createCommands = [
@@ -55,30 +60,42 @@ async function buildReleaseBranch(
     'git pull --ff-only',
     `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
   ];
-  await runCommands(createCommands, { debug });
-  await rm([`${WORKSPACE_DIR}/**`, `!${WORKSPACE_DIR}`]);
+  await runCommands(createCommands, { useClean: true, debug });
+  await rm([`${RELEASE_DIR}/**`, `!${RELEASE_DIR}`]);
 
   // Build
-  await runCommands(`npm run ${releaseScript}`, { debug });
+  await runCommands(`npm run ${releaseScript}`, { useClean: true, debug });
   copyDir(buildDir, releaseDir, (err) => {
     logger.fatal(err);
   });
 
   // Release
-  const commitId = await getCurrentCommitId(currentBranch);
-  const LOG_MESSAGE =
-    logMessage ||
-    `build: ${releaseBranch} from ${currentBranch} as of ${commitId}`;
-  const releaseCommand = [
-    'git status',
-    'git add -A',
-    `git commit -m "${LOG_MESSAGE}"`,
-    `git push -f -u origin ${releaseBranch}`
-  ];
-  await runCommands(releaseCommand, { debug, cwd: releaseDir });
+  const hasUncommitted = await checkStatus({
+    cwd: releaseDir
+  });
+  if (hasUncommitted) {
+    const commitId = await getCurrentCommitId(currentBranch);
+    const LOG_MESSAGE =
+      logMessage ||
+      `build: ${releaseBranch} from ${currentBranch} as of ${commitId}`;
 
-  // Clean up
-  await clean(WORKSPACE_DIR);
+    const releaseCommand = [
+      'git status',
+      'git add -A',
+      `git commit -m "${LOG_MESSAGE}"`,
+      `git push -f -u origin ${releaseBranch}`
+    ];
+    await runCommands(releaseCommand, {
+      cwd: releaseDir,
+      useClean: true,
+      debug
+    });
+
+    // Clean up
+    await clean('Release completed');
+  } else {
+    await clean('Release unchanged');
+  }
 }
 
 export async function deployProject({

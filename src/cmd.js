@@ -1,16 +1,16 @@
 import util from 'node:util';
 import { exec } from 'node:child_process';
 import logger from './logger.js';
-import { NO_NEED_TO_MERGE, getConfig } from './config.js';
-import { parseBranchLines } from './utils.js';
+import { RELEASE_DIR, getConfig, NO_NEED_TO_MERGE } from './config.js';
+import { parseBranchLines, rm } from './utils.js';
 
 const asyncExec = util.promisify(exec);
 
-export async function execCommand(command) {
+export async function execCommand(command, options = {}) {
   let result;
 
   try {
-    const { stdout } = await asyncExec(command);
+    const { stdout } = await asyncExec(command, options);
     result = stdout.trim();
   } catch (error) {
     logger.fatal(error);
@@ -20,7 +20,7 @@ export async function execCommand(command) {
 }
 
 async function runCommand(command, cmdOptions) {
-  const { debug, justRun, ...options } = cmdOptions;
+  const { debug, justRun, useClean, ...options } = cmdOptions;
 
   debug && console.log(command);
 
@@ -32,6 +32,7 @@ async function runCommand(command, cmdOptions) {
       const { stdout } = await asyncExec(command, options || {});
       console.log(stdout);
     } catch (error) {
+      useClean && (await clean());
       logger.fatal(error);
     }
   }
@@ -45,6 +46,17 @@ export async function runCommands(awesomeCommand, cmdOptions = {}) {
   } else {
     await runCommand(awesomeCommand, cmdOptions);
   }
+}
+
+export async function clean(message = '') {
+  await rm(RELEASE_DIR);
+  await runCommands('git worktree prune');
+  message && logger.log(message);
+}
+
+export async function checkStatus(options = {}) {
+  const result = await execCommand('git status -s', options);
+  return !!result.length;
 }
 
 export async function getCurrentBranch() {

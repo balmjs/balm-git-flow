@@ -1,7 +1,8 @@
-import { env } from 'node:process';
+import path from 'node:path';
+import { cwd, env } from 'node:process';
 
-export const WORKSPACE_DIR = '.balm-git-flow';
-export const NO_NEED_TO_MERGE = '[No need to merge]';
+export const RELEASE_DIR = '.balm-git-flow';
+export const releaseDir = path.join(cwd(), RELEASE_DIR);
 
 const defaultOptions = {
   main: 'main',
@@ -39,3 +40,5 @@ export function setConfig() {
 export function getConfig(key) {
   return options[key] || options;
 }
+
+export const NO_NEED_TO_MERGE = '[No need to merge]';
