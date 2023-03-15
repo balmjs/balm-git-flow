@@ -9,7 +9,9 @@ const defaultOptions = {
   release: 'release',
   releases: ['release'],
   scripts: ['build'],
-  buildDir: 'dist'
+  buildDir: 'dist',
+  repositories: [],
+  site: ''
 };
 
 export const defaultContents = [
@@ -17,7 +19,9 @@ export const defaultContents = [
   `process.env.BALM_GIT_FLOW_RELEASE = 'release';`,
   `process.env.BALM_GIT_FLOW_RELEASES = ['release'];`,
   `process.env.BALM_GIT_FLOW_SCRIPTS = ['build'];`,
-  `process.env.BALM_GIT_FLOW_BUILD_DIR = 'dist';`
+  `process.env.BALM_GIT_FLOW_BUILD_DIR = 'dist';`,
+  `// process.env.BALM_GIT_FLOW_REPOSITORIES = [];`,
+  `// process.env.BALM_GIT_FLOW_SITE = '';`
 ];
 
 let options = {};
@@ -33,7 +37,11 @@ export function setConfig() {
     scripts: env.BALM_GIT_FLOW_SCRIPTS
       ? env.BALM_GIT_FLOW_SCRIPTS.split(',')
       : defaultOptions.scripts,
-    buildDir: env.BALM_GIT_FLOW_BUILD_DIR || defaultOptions.buildDir
+    buildDir: env.BALM_GIT_FLOW_BUILD_DIR || defaultOptions.buildDir,
+    repositories: env.BALM_GIT_FLOW_REPOSITORIES
+      ? env.BALM_GIT_FLOW_REPOSITORIES.split(',')
+      : defaultOptions.repositories,
+    site: env.BALM_GIT_FLOW_SITE || defaultOptions.site
   };
 }
 

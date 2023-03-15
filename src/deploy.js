@@ -43,6 +43,23 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   }
 }
 
+async function publishingFromSource(releaseBranch) {
+  const { debug, releases, repositories, site } = getConfig();
+
+  if (repositories.length) {
+    const releaseIndex = releases.indexOf(releaseBranch);
+    const repository = repositories[releaseIndex] || repositories[0];
+    const branch = `${releaseBranch}:${site || releaseBranch}`;
+
+    const publishingCommands = `git push -f ${repository} ${branch}`;
+    await runCommands(publishingCommands, {
+      cwd: releaseDir,
+      useClean: true,
+      debug
+    });
+  }
+}
+
 async function buildReleaseBranch(
   currentBranch,
   releaseBranch,
@@ -83,13 +100,14 @@ async function buildReleaseBranch(
       'git status',
       'git add -A',
       `git commit -m "${LOG_MESSAGE}"`,
-      `git push -f -u origin ${releaseBranch}`
+      `git push -f origin ${releaseBranch}`
     ];
     await runCommands(releaseCommand, {
       cwd: releaseDir,
       useClean: true,
       debug
     });
+    await publishingFromSource(releaseBranch);
 
     // Clean up
     await clean('Release completed');
