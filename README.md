@@ -24,13 +24,15 @@ npm install -g balm-git-flow
 
 First, create a **`balm.env.js`** file in your project root directory (use `balm-git doctor`)
 
-| Variable Name           | Type     | Description                                             |
-| ----------------------- | -------- | ------------------------------------------------------- |
-| BALM_GIT_FLOW_MAIN      | `string` | main branch                                             |
-| BALM_GIT_FLOW_RELEASE   | `string` | production release branch                               |
-| BALM_GIT_FLOW_RELEASES  | `array`  | all release branches                                    |
-| BALM_GIT_FLOW_SCRIPTS   | `array`  | all build scripts corresponding to the release branches |
-| BALM_GIT_FLOW_BUILD_DIR | `string` | build out dir                                           |
+| Variable Name              | Type     | Description                                                                                        |
+| -------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| BALM_GIT_FLOW_MAIN         | `string` | main branch (source code)                                                                          |
+| BALM_GIT_FLOW_RELEASE      | `string` | production release branch                                                                          |
+| BALM_GIT_FLOW_RELEASES     | `array`  | all release branches                                                                               |
+| BALM_GIT_FLOW_SCRIPTS      | `array`  | all build scripts corresponding to the release branches ( the keys of `scripts` in `package.json`) |
+| BALM_GIT_FLOW_BUILD_DIR    | `string` | build out dir (by `npm-run-script`)                                                                |
+| BALM_GIT_FLOW_REPOSITORIES | `array`  | remote repositories                                                                                |
+| BALM_GIT_FLOW_SITE         | `string` | production release branch (remote) for project site                                                |
 
 ## Usage
 
