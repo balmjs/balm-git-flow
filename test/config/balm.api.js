@@ -5,7 +5,9 @@ module.exports = (mix) => {
     // For test data
     mix.copy('app/data/*', 'dist/api');
 
-    // publish(mix);
+    mix.remove(['dist/rev-manifest.json']);
+
+    publish(mix);
   } else {
     // For BalmUI iconfonts
     mix.copy('node_modules/balm-ui/fonts/*', 'app/fonts');
