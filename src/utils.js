@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import { once } from 'node:events';
 import path from 'node:path';
 import del from 'del';
+import { copy } from 'fs-extra';
 import logger from './logger.js';
 
 // Define regular expression
@@ -50,53 +51,6 @@ export async function writeIterableToFile(iterable, filePath) {
 export async function rm(dir) {
   await del(dir, { force: true });
 }
-
-/**
- * 复制文件夹到目标文件夹
- * @param {string} src 源目录
- * @param {string} dest 目标目录
- * @param {function} callback 回调
- */
-function copyDir(src, dest, callback) {
-  const copy = (copySrc, copyDest) => {
-    fs.readdir(copySrc, (err, list) => {
-      if (err) {
-        callback(err);
-        return;
-      }
-      list.forEach((item) => {
-        const ss = path.resolve(copySrc, item);
-        fs.stat(ss, (err, stat) => {
-          if (err) {
-            callback(err);
-          } else {
-            const curSrc = path.resolve(copySrc, item);
-            const curDest = path.resolve(copyDest, item);
-
-            if (stat.isFile()) {
-              // 文件，直接复制
-              fs.createReadStream(curSrc).pipe(fs.createWriteStream(curDest));
-            } else if (stat.isDirectory()) {
-              // 目录，进行递归
-              fs.mkdirSync(curDest, { recursive: true });
-              copy(curSrc, curDest);
-            }
-          }
-        });
-      });
-    });
-  };
-
-  fs.access(dest, (err) => {
-    if (err) {
-      // 若目标目录不存在，则创建
-      fs.mkdirSync(dest, { recursive: true });
-    }
-    copy(src, dest);
-  });
-}
-
-const copy = util.promisify(copyDir);
 
 export async function cp(src, dest) {
   try {

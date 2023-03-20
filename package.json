@@ -41,6 +41,7 @@
     "chalk": "4",
     "commander": "^10.0.0",
     "del": "6",
+    "fs-extra": "^11.1.0",
     "inquirer": "8"
   },
   "devDependencies": {
