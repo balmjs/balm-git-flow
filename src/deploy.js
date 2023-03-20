@@ -82,7 +82,7 @@ async function buildReleaseBranch(
 
   // Build
   await runCommands(`npm run ${releaseScript}`, { useClean: true, debug });
-  copyDir(buildDir, releaseDir, () => {});
+  copyDir('a/b/c', releaseDir, () => {});
 
   // Release
   const hasUncommitted = await checkStatus({
