@@ -57,7 +57,7 @@ export async function rm(dir) {
  * @param {string} dest 目标目录
  * @param {function} callback 回调
  */
-function copyDir(src, dest, callback) {
+export function copyDir(src, dest, callback) {
   const copy = (copySrc, copyDest) => {
     fs.readdir(copySrc, (err, list) => {
       if (err) {
