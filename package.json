@@ -28,12 +28,7 @@
     "balm-git-prod": "bin/balm-prod.js"
   },
   "scripts": {
-    "build": "gulp prepublish",
-    "test:doctor": "node ./bin/balm-doctor.js",
-    "test:dev": "node ./bin/balm-dev.js",
-    "test:prod": "node ./bin/balm-prod.js",
-    "build:test": "echo 'hello'",
-    "build:prod": "echo 'world'"
+    "build": "gulp prepublish"
   },
   "repository": {
     "type": "git",
@@ -50,7 +45,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-env": "^7.20.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0"
   },

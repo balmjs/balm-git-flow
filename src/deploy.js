@@ -6,7 +6,7 @@ import {
 } from './config.js';
 import { runCommands, clean, checkStatus, getCurrentCommitId } from './cmd.js';
 import logger from './logger.js';
-import { rm, copyDir } from './utils.js';
+import { rm, cp } from './utils.js';
 
 async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   const { debug, main, release } = getConfig();
@@ -82,9 +82,7 @@ async function buildReleaseBranch(
 
   // Build
   await runCommands(`npm run ${releaseScript}`, { useClean: true, debug });
-  copyDir(buildDir, releaseDir, (err) => {
-    logger.fatal(err);
-  });
+  await cp(buildDir, releaseDir);
 
   // Release
   const hasUncommitted = await checkStatus({

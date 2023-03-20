@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import { once } from 'node:events';
 import path from 'node:path';
 import del from 'del';
+import logger from './logger.js';
 
 // Define regular expression
 const reTypeOf = /(?:^\[object\s(.*?)\]$)/;
@@ -56,7 +57,7 @@ export async function rm(dir) {
  * @param {string} dest 目标目录
  * @param {function} callback 回调
  */
-export function copyDir(src, dest, callback) {
+function copyDir(src, dest, callback) {
   const copy = (copySrc, copyDest) => {
     fs.readdir(copySrc, (err, list) => {
       if (err) {
@@ -93,4 +94,13 @@ export function copyDir(src, dest, callback) {
     }
     copy(src, dest);
   });
+}
+
+export async function cp(src, dest) {
+  try {
+    await copyDir(src, dest);
+    logger.log('Build contents copied successfully');
+  } catch (error) {
+    logger.fatal(error);
+  }
 }
