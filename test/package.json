@@ -1,5 +1,5 @@
 {
-  "name": "test",
+  "name": "balm-git-flow-test",
   "version": "1.0.0",
   "scripts": {
     "dev": "balm",
