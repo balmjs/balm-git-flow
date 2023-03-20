@@ -6,7 +6,7 @@ import {
 } from './config.js';
 import { runCommands, clean, checkStatus, getCurrentCommitId } from './cmd.js';
 import logger from './logger.js';
-import { rm, copyDir } from './utils.js';
+import { rm, cp } from './utils.js';
 
 async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   const { debug, main, release } = getConfig();
@@ -73,8 +73,8 @@ async function buildReleaseBranch(
 
   // New worktree
   const createCommands = [
-    // 'git remote prune origin',
-    // 'git pull --ff-only',
+    'git remote prune origin',
+    'git pull --ff-only',
     `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
   ];
   await runCommands(createCommands, { useClean: true, debug });
@@ -82,7 +82,7 @@ async function buildReleaseBranch(
 
   // Build
   await runCommands(`npm run ${releaseScript}`, { useClean: true, debug });
-  copyDir('a/b/c', releaseDir, () => {});
+  await cp(buildDir, releaseDir);
 
   // Release
   const hasUncommitted = await checkStatus({
@@ -95,17 +95,17 @@ async function buildReleaseBranch(
       `build: ${releaseBranch} from ${currentBranch} as of ${commitId}`;
 
     const releaseCommand = [
-      'git status'
-      // 'git add -A',
-      // `git commit -m "${LOG_MESSAGE}"`
-      // `git push -f origin ${releaseBranch}`
+      'git status',
+      'git add -A',
+      `git commit -m "${LOG_MESSAGE}"`,
+      `git push -f origin ${releaseBranch}`
     ];
     await runCommands(releaseCommand, {
       cwd: releaseDir,
       useClean: true,
       debug
     });
-    // await publishingFromSource(releaseBranch);
+    await publishingFromSource(releaseBranch);
 
     // Clean up
     await clean('Release completed');

@@ -57,7 +57,7 @@ export async function rm(dir) {
  * @param {string} dest 目标目录
  * @param {function} callback 回调
  */
-export function copyDir(src, dest, callback) {
+function copyDir(src, dest, callback) {
   const copy = (copySrc, copyDest) => {
     fs.readdir(copySrc, (err, list) => {
       if (err) {
@@ -96,9 +96,11 @@ export function copyDir(src, dest, callback) {
   });
 }
 
+const copy = util.promisify(copyDir);
+
 export async function cp(src, dest) {
   try {
-    await copyDir(src, dest);
+    await copy(src, dest);
     logger.log('Build contents copied successfully');
   } catch (error) {
     logger.fatal(error);
