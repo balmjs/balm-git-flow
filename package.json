@@ -24,13 +24,6 @@
     "balm-git-dev": "bin/balm-dev.js",
     "balm-git-prod": "bin/balm-prod.js"
   },
-  "scripts": {
-    "test:doctor": "node ./bin/balm-doctor.js",
-    "test:dev": "node ./bin/balm-dev.js",
-    "test:prod": "node ./bin/balm-prod.js",
-    "build:test": "echo 'hello'",
-    "build:prod": "echo 'world'"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/balmjs/balm-git-flow.git"
@@ -41,7 +34,7 @@
   "dependencies": {
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
-    "inquirer": "^9.1.4"
+    "inquirer": "^9.1.5"
   },
   "engines": {
     "node": ">=12.20.0"
