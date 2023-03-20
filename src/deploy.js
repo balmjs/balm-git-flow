@@ -105,7 +105,7 @@ async function buildReleaseBranch(
       useClean: true,
       debug
     });
-    await publishingFromSource(releaseBranch);
+    // await publishingFromSource(releaseBranch);
 
     // Clean up
     await clean('Release completed');
