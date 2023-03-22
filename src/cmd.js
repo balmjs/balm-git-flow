@@ -20,7 +20,7 @@ export async function execCommand(command, options = {}) {
 }
 
 async function runCommand(command, cmdOptions) {
-  const { debug, justRun, useClean, ...options } = cmdOptions;
+  const { debug, justRun, useClean, releaseBranch, ...options } = cmdOptions;
 
   debug && console.log(command);
 
@@ -32,7 +32,7 @@ async function runCommand(command, cmdOptions) {
       const { stdout } = await asyncExec(command, options || {});
       console.log(stdout);
     } catch (error) {
-      useClean && (await clean());
+      useClean && (await clean(releaseBranch));
       logger.fatal(error);
     }
   }
@@ -48,10 +48,12 @@ export async function runCommands(awesomeCommand, cmdOptions = {}) {
   }
 }
 
-export async function clean(message = '') {
+export async function clean(releaseBranch, message = '') {
   await rm(RELEASE_DIR);
   await runCommands('git worktree prune');
   message && logger.log(message);
+
+  releaseBranch && (await asyncExec(`git branch -D ${releaseBranch}`));
 }
 
 export async function checkStatus(options = {}) {

@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import {
   RELEASE_DIR,
   releaseDir,
@@ -15,30 +16,26 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   if (hasUncommitted) {
     await runCommands('git stash');
     logger.log(
-      `You can use 'git stash pop' to restore the latest status after release completed`
+      `You can use ${chalk.yellow(
+        'git stash pop'
+      )} to restore the latest status after release completed`
     );
   }
 
-  if (releaseBranch === release) {
-    if (currentBranch === main) {
-      devBranch = devBranch === NO_NEED_TO_MERGE ? '' : devBranch;
+  if (release.includes(releaseBranch) && currentBranch === main) {
+    devBranch = devBranch === NO_NEED_TO_MERGE ? '' : devBranch;
 
-      if (devBranch) {
-        try {
-          await runCommands(`git merge --no-ff origin/${devBranch}`, {
-            debug,
-            justRun: true
-          });
-        } catch (e) {
-          await runCommands(`git merge --no-ff ${devBranch}`, { debug });
-        } finally {
-          await runCommands(`git push origin ${main}`, { debug });
-        }
+    if (devBranch) {
+      try {
+        await runCommands(`git merge --no-ff origin/${devBranch}`, {
+          debug,
+          justRun: true
+        });
+      } catch (e) {
+        await runCommands(`git merge --no-ff ${devBranch}`, { debug });
+      } finally {
+        await runCommands(`git push origin ${main}`, { debug });
       }
-    } else {
-      logger.fatal(
-        `If you want to release '${release}', switch to the '${main}' branch first!`
-      );
     }
   }
 }
@@ -56,6 +53,7 @@ async function publishingFromSource(releaseBranch) {
       await runCommands(publishingCommands, {
         cwd: releaseDir,
         useClean: true,
+        releaseBranch,
         debug
       });
     }
@@ -71,7 +69,7 @@ async function buildReleaseBranch(
   const { debug, buildDir } = getConfig();
 
   // Clean up
-  await clean('Start building');
+  await clean(false, 'Start building');
 
   // New worktree
   const createCommands = [
@@ -79,11 +77,15 @@ async function buildReleaseBranch(
     'git pull --ff-only',
     `git worktree add -B ${releaseBranch} ${releaseDir} origin/${releaseBranch}`
   ];
-  await runCommands(createCommands, { useClean: true, debug });
+  await runCommands(createCommands, { useClean: true, releaseBranch, debug });
   await rm([`${RELEASE_DIR}/**`, `!${RELEASE_DIR}`]);
 
   // Build
-  await runCommands(`npm run ${releaseScript}`, { useClean: true, debug });
+  await runCommands(`npm run ${releaseScript}`, {
+    useClean: true,
+    releaseBranch,
+    debug
+  });
   await cp(buildDir, releaseDir);
 
   // Release
@@ -105,14 +107,15 @@ async function buildReleaseBranch(
     await runCommands(releaseCommand, {
       cwd: releaseDir,
       useClean: true,
+      releaseBranch,
       debug
     });
     await publishingFromSource(releaseBranch);
 
     // Clean up
-    await clean('Release completed');
+    await clean(releaseBranch, 'Release completed');
   } else {
-    await clean('Release unchanged');
+    await clean(releaseBranch, 'Release unchanged');
   }
 }
 

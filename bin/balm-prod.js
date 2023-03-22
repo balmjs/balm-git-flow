@@ -4,35 +4,44 @@ const { setEnvironment } = require('../lib/env.js');
 const { getConfig } = require('../lib/config.js');
 const { getCurrentBranch, getDevelopmentBranches } = require('../lib/cmd.js');
 const { deployProject } = require('../lib/deploy.js');
+const logger = require('../lib/logger.js');
 
 async function production() {
   await setEnvironment();
 
   const { main, release, releases, scripts } = getConfig();
-  const currentBranch = await getCurrentBranch();
-  const devBranches = await getDevelopmentBranches();
 
-  inquirer
-    .prompt([
-      {
-        type: 'list',
-        name: 'releaseBranch',
-        message: 'Please select the branch of production:',
-        choices: releases
-      },
+  const prompt = inquirer.createPromptModule();
+  const { releaseBranch } = await prompt([
+    {
+      type: 'list',
+      name: 'releaseBranch',
+      message: 'Please select the production branch:',
+      choices: releases
+    }
+  ]);
+
+  const currentBranch = await getCurrentBranch();
+  const canRelease = release.includes(releaseBranch)
+    ? currentBranch === main
+    : true;
+
+  if (canRelease) {
+    const devBranches = await getDevelopmentBranches();
+
+    prompt([
       {
         type: 'list',
         name: 'devBranch',
         message: 'Please select the branch of development:',
         choices: devBranches,
-        when: ({ releaseBranch }) =>
-          currentBranch === main && releaseBranch === release
+        when: release.includes(releaseBranch) && currentBranch === main
       },
       {
         type: 'list',
         name: 'releaseScript',
         message: 'Please select the command of npm-run-script:',
-        default: ({ releaseBranch }) => {
+        default: () => {
           const index = releases.indexOf(releaseBranch);
           return scripts[index];
         },
@@ -41,7 +50,7 @@ async function production() {
       {
         type: 'confirm',
         name: 'ok',
-        message: ({ releaseBranch, releaseScript }) => {
+        message: ({ releaseScript }) => {
           let msg = `Determine the release '${releaseBranch}' branch`;
           if (releaseScript) {
             msg += ` using the '${releaseScript}' command`;
@@ -54,15 +63,20 @@ async function production() {
         name: 'logMessage',
         message: 'Please input the release log message:'
       }
-    ])
-    .then(
+    ]).then(
       (answers) =>
         answers.ok &&
         deployProject({
           currentBranch,
+          releaseBranch,
           ...answers
         })
     );
+  } else {
+    logger.fatal(
+      `If you want to release '${releaseBranch}', switch to the '${main}' branch first!`
+    );
+  }
 }
 
 production();
