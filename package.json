@@ -1,6 +1,6 @@
 {
   "name": "balm-git-flow",
-  "version": "0.8.1-legacy",
+  "version": "0.9.0-legacy",
   "description": "The best practices for front-end git flow",
   "keywords": [
     "frontend",
@@ -41,7 +41,7 @@
     "chalk": "4",
     "commander": "^10.0.0",
     "del": "6",
-    "fs-extra": "^11.1.0",
+    "fs-extra": "^11.0.0",
     "inquirer": "8"
   },
   "devDependencies": {
