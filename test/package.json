@@ -17,7 +17,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.21.0",
     "@vue/compiler-sfc": "^3.2.30",
-    "balm": "^4.16.2",
+    "balm": "^4.17.0",
     "eslint": "^8.0.0",
     "eslint-plugin-vue": "^9.0.0",
     "miragejs": "^0.1.47",
