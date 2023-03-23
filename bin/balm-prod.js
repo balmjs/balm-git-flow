@@ -4,7 +4,7 @@ const { setEnvironment } = require('../lib/env.js');
 const { getConfig } = require('../lib/config.js');
 const { getCurrentBranch, getDevelopmentBranches } = require('../lib/cmd.js');
 const { deployProject } = require('../lib/deploy.js');
-const logger = require('../lib/logger.js');
+const { fatal } = require('../lib/logger.js');
 
 async function production() {
   await setEnvironment();
@@ -73,7 +73,7 @@ async function production() {
         })
     );
   } else {
-    logger.fatal(
+    fatal(
       `If you want to release '${releaseBranch}', switch to the '${main}' branch first!`
     );
   }
