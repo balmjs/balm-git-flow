@@ -13,7 +13,8 @@ async function createEmptyBranch(newBranch, currentBranch) {
     'git rm -rf .',
     `git commit --allow-empty -m "Initial commit for ${newBranch}"`,
     `git push origin ${newBranch}`,
-    `git checkout ${currentBranch}`
+    `git checkout ${currentBranch}`,
+    `git branch -D ${newBranch}`
   ];
   await runCommands(createCommands);
 }
