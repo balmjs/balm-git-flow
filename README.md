@@ -39,7 +39,7 @@ First, create a **`balm.env.js`** file in your project root directory (use `balm
 | BALM_GIT_FLOW_SCRIPTS      | `array`           | all build scripts corresponding to the release branches ( the keys of `scripts` in `package.json`) |
 | BALM_GIT_FLOW_BUILD_DIR    | `string`          | build out dir (by `npm-run-script`)                                                                |
 | BALM_GIT_FLOW_REPOSITORIES | `array`           | independent repositories                                                                           |
-| BALM_GIT_FLOW_SITE         | `string`          | production release branch (remote) for project site                                                |
+| BALM_GIT_FLOW_SITE         | `string`          | production release branch for independent repositories                                             |
 
 ## Usage
 
