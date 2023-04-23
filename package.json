@@ -1,6 +1,6 @@
 {
   "name": "balm-git-flow",
-  "version": "0.9.2-legacy",
+  "version": "0.9.3-legacy",
   "description": "The best practices for front-end git flow",
   "keywords": [
     "frontend",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
-    "@babel/preset-env": "^7.20.0",
+    "@babel/preset-env": "^7.21.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0"
   },

@@ -93,7 +93,7 @@ async function buildReleaseBranch(
     cwd: releaseDir
   });
   if (hasUncommitted) {
-    const commitId = await getCurrentCommitId(currentBranch);
+    const commitId = await getCurrentCommitId();
     const LOG_MESSAGE =
       logMessage ||
       `build: ${releaseBranch} from ${currentBranch} as of ${commitId}`;

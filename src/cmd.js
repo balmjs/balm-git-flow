@@ -65,8 +65,8 @@ export async function getCurrentBranch() {
   return await execCommand('git symbolic-ref --short -q HEAD');
 }
 
-export async function getCurrentCommitId(currentBranch) {
-  return await execCommand(`git log -1 --pretty=format:%h ${currentBranch}`);
+export async function getCurrentCommitId() {
+  return await execCommand('git log -1 --pretty=format:%h');
 }
 
 export async function getRemoteBranches(filterHeadCommand) {
