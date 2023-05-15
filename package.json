@@ -1,6 +1,6 @@
 {
   "name": "balm-git-flow",
-  "version": "0.9.3-legacy",
+  "version": "0.10.0-legacy",
   "description": "The best practices for front-end git flow",
   "keywords": [
     "frontend",
