@@ -10,16 +10,21 @@ import logger from './logger.js';
 import { rm, cp } from './utils.js';
 
 async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
-  const { debug, main, release } = getConfig();
+  const { debug, main, release, ignoreUncommitted } = getConfig();
 
   const hasUncommitted = await checkStatus();
   if (hasUncommitted) {
-    await runCommands('git stash');
-    logger.log(
-      `You can use ${chalk.yellow(
-        'git stash pop'
-      )} to restore the latest status after release completed`
-    );
+    if (ignoreUncommitted) {
+      await runCommands('git stash');
+      logger.log(
+        `You can use ${chalk.yellow(
+          'git stash pop'
+        )} to restore the latest status after release completed`
+      );
+    } else {
+      logger.log(chalk.yellow('Local changes were not restored'));
+      return false;
+    }
   }
 
   if (release.includes(releaseBranch) && currentBranch === main) {
@@ -38,6 +43,8 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
       }
     }
   }
+
+  return true;
 }
 
 async function publishingFromSource(releaseBranch) {
@@ -95,13 +102,12 @@ async function buildReleaseBranch(
   if (hasUncommitted) {
     const commitId = await getCurrentCommitId();
     const LOG_MESSAGE =
-      logMessage ||
-      `build: ${releaseBranch} from ${currentBranch} as of ${commitId}`;
+      logMessage || `${releaseBranch} from ${currentBranch} as of ${commitId}`;
 
     const releaseCommand = [
       'git status',
       'git add -A',
-      `git commit -m "${LOG_MESSAGE}"`,
+      `git commit -m "build: ${LOG_MESSAGE}"`,
       `git push -f origin ${releaseBranch}`
     ];
     await runCommands(releaseCommand, {
@@ -126,11 +132,12 @@ export async function deployProject({
   devBranch,
   logMessage
 }) {
-  await checkReleaseBranch(currentBranch, releaseBranch, devBranch);
-  await buildReleaseBranch(
-    currentBranch,
-    releaseBranch,
-    releaseScript,
-    logMessage
-  );
+  if (await checkReleaseBranch(currentBranch, releaseBranch, devBranch)) {
+    await buildReleaseBranch(
+      currentBranch,
+      releaseBranch,
+      releaseScript,
+      logMessage
+    );
+  }
 }
