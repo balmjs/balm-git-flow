@@ -12,9 +12,6 @@ process.env.BALM_GIT_FLOW_SCRIPTS = ['prod'];
 
 // Files and directory
 process.env.BALM_GIT_FLOW_BUILD_DIR = 'assets';
-process.env.BALM_GIT_FLOW_REPOSITORIES = [
-  'git@github.com:balmjs/balm-git-flow-test.git'
-];
 process.env.BALM_GIT_FLOW_IGNORE_UNCOMMITTED = false;
 process.env.BALM_GIT_FLOW_USE_CUSTOM_MESSAGE = false;
 
