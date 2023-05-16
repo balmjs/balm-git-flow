@@ -68,3 +68,27 @@ export function getConfig(key) {
 }
 
 export const NO_NEED_TO_MERGE = '[No need to merge]';
+
+export function getReleaseScript(
+  releaseBranch,
+  { releases, scripts, releaseScripts }
+) {
+  let releaseScript = scripts[0];
+
+  if (scripts.length > 1) {
+    if (Object.keys(releaseScripts).length) {
+      for (let i = 0, len = scripts.length; i < len; i++) {
+        const script = scripts[i];
+        if (releaseScripts[script].includes(releaseBranch)) {
+          releaseScript = script;
+          break;
+        }
+      }
+    } else {
+      const index = releases.indexOf(releaseBranch);
+      releaseScript = scripts[index];
+    }
+  }
+
+  return releaseScript;
+}
