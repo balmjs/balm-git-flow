@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import inquirer from 'inquirer';
 import setEnvironment from '../lib/env.js';
-import { getConfig } from '../lib/config.js';
+import { getConfig, getReleaseScript } from '../lib/config.js';
 import { getCurrentBranch, getDevelopmentBranches } from '../lib/cmd.js';
 import deployProject from '../lib/deploy.js';
 import logger from '../lib/logger.js';
@@ -9,8 +9,9 @@ import logger from '../lib/logger.js';
 async function production() {
   await setEnvironment();
 
+  const config = getConfig();
   const { main, release, releases, scripts, releaseScripts, useCustomMessage } =
-    getConfig();
+    config;
 
   const prompt = inquirer.createPromptModule();
   const { releaseBranch } = await prompt([
@@ -29,6 +30,7 @@ async function production() {
 
   if (canRelease) {
     const devBranches = await getDevelopmentBranches();
+    const releaseScript = getReleaseScript(releaseBranch, config);
 
     prompt([
       {
@@ -47,7 +49,7 @@ async function production() {
         message: 'Please select the command of npm-run-script:',
         choices: scripts,
         when:
-          !releaseScripts &&
+          !releaseScript &&
           scripts.length > 1 &&
           scripts.length !== releases.length
       },
@@ -58,25 +60,8 @@ async function production() {
         when: useCustomMessage
       }
     ]).then((answers) => {
-      switch (scripts.length) {
-        case 1:
-          answers.releaseScript = scripts[0];
-          break;
-        case releases.length:
-          const index = releases.indexOf(releaseBranch);
-          answers.releaseScript = scripts[index];
-          break;
-        default:
-          for (let i = 0, len = scripts.length; i < len; i++) {
-            const script = scripts[i];
-            if (
-              Array.isArray(releaseScripts[script]) &&
-              releaseScripts[script].includes(releaseBranch)
-            ) {
-              answers.releaseScript = script;
-              break;
-            }
-          }
+      if (!answers.releaseScript) {
+        answers.releaseScript = releaseScript;
       }
 
       deployProject({
