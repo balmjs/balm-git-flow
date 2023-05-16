@@ -22,7 +22,7 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
         )} to restore the latest status after release completed`
       );
     } else {
-      logger.log(chalk.yellow('Local changes were not restored'));
+      await clean(false, chalk.yellow('Local changes were not restored'));
       return false;
     }
   }
