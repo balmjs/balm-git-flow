@@ -69,7 +69,10 @@ async function production() {
         default:
           for (let i = 0, len = scripts.length; i < len; i++) {
             const script = scripts[i];
-            if (releaseScripts[script].includes(releaseBranch)) {
+            if (
+              Array.isArray(releaseScripts[script]) &&
+              releaseScripts[script].includes(releaseBranch)
+            ) {
               answers.releaseScript = script;
               break;
             }
