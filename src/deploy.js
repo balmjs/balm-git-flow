@@ -12,6 +12,7 @@ import { rm, cp } from './utils.js';
 async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
   const { debug, main, release, ignoreUncommitted } = getConfig();
 
+  await clean(false);
   const hasUncommitted = await checkStatus();
   if (hasUncommitted) {
     if (ignoreUncommitted) {
@@ -22,7 +23,7 @@ async function checkReleaseBranch(currentBranch, releaseBranch, devBranch) {
         )} to restore the latest status after release completed`
       );
     } else {
-      await clean(false, chalk.yellow('Local changes were not restored'));
+      logger.log(chalk.yellow('Local changes were not restored'));
       return false;
     }
   }
