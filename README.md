@@ -16,7 +16,7 @@
 
 ## Requirements
 
-1. [Node.js](https://nodejs.org/) >=12.20.0 (>=14.18.0 on Windows)
+1. [Node.js](https://nodejs.org/) >=16 (>=14.18.0 on Windows)
 2. [Git](https://git-scm.com/) 2.6.0+
 
 ## Installation
