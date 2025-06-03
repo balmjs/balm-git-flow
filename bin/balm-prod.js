@@ -13,8 +13,7 @@ async function production() {
   const { main, release, releases, scripts, releaseScripts, useCustomMessage } =
     config;
 
-  const prompt = inquirer.createPromptModule();
-  const { releaseBranch } = await prompt([
+  const { releaseBranch } = await inquirer.prompt([
     {
       type: 'list',
       name: 'releaseBranch',
@@ -32,7 +31,7 @@ async function production() {
     const devBranches = await getDevelopmentBranches();
     const releaseScript = getReleaseScript(releaseBranch, config);
 
-    prompt([
+    inquirer.prompt([
       {
         type: 'list',
         name: 'devBranch',
