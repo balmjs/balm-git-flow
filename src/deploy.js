@@ -108,7 +108,7 @@ async function buildReleaseBranch(
     const releaseCommand = [
       'git status',
       'git add -A',
-      `git commit -m "build: ${LOG_MESSAGE}"`,
+      `git commit -m "[BalmGitFlow]build: ${LOG_MESSAGE}"`,
       `git push -f origin ${releaseBranch}`
     ];
     await runCommands(releaseCommand, {
