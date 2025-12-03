@@ -1,5 +1,13 @@
 # Balm Git Flow ChangeLog
 
+## v1.1.1 (2025.12.03)
+
+### Chore
+
+- update deps
+  - `commander`: 12.x -> 13.x
+  - `inquirer`: 9.x -> 12.x
+
 ## v1.1.0 (2024.02.04)
 
 ### Chore
