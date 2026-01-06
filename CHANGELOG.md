@@ -1,5 +1,11 @@
 # Balm Git Flow ChangeLog
 
+## v1.1.2 (2026.01.06)
+
+### Bugfix
+
+- fix: `balm-git-dev` argument bug
+
 ## v1.1.1 (2025.12.03)
 
 ### Chore

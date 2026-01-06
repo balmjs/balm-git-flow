@@ -11,7 +11,9 @@ const program = new Command();
  * Usage
  */
 
-program.usage('<new-branch> [<start-point>]');
+program
+  .argument('<new-branch>', 'name of the new development branch')
+  .argument('[start-point]', 'branch to start from (defaults to origin main)');
 
 /**
  * Help
