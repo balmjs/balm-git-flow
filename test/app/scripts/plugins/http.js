@@ -50,7 +50,13 @@ axios.interceptors.response.use(
     const { status, data, message } = response;
 
     if (successStatusCodes.includes(status)) {
-      // TODO: custom response handler
+      // custom response handler
+      let { code, message } = data;
+      if (code && code !== 200) {
+        errorHandler({ message });
+        return Promise.reject(data);
+      }
+
       return Promise.resolve(data);
     } else {
       errorHandler({ status, message });
