@@ -32,6 +32,8 @@ const httpErrorMessage = {
 
 const bus = useBus();
 
+let customErrorHandler = null;
+
 function errorHandler({ message }) {
   bus.emit('on-error', message || httpErrorMessage.default);
 }
@@ -59,19 +61,22 @@ axios.interceptors.response.use(
     }
   },
   (error) => {
-    // TODO: custom error handler
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      bus.emit('on-error', httpErrorMessage.response);
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      bus.emit('on-error', httpErrorMessage.request);
+    if (customErrorHandler) {
+      customErrorHandler(error);
     } else {
-      // Something happened in setting up the request that triggered an Error
-      bus.emit('on-error', httpErrorMessage.unknown);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        bus.emit('on-error', httpErrorMessage.response);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        bus.emit('on-error', httpErrorMessage.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        bus.emit('on-error', httpErrorMessage.unknown);
+      }
     }
 
     return Promise.reject(error);
@@ -81,9 +86,13 @@ axios.interceptors.response.use(
 const useHttp = () => axios;
 
 export default {
-  install(app) {
+  install(app, options = {}) {
     axios.defaults.baseURL = API_ENDPOINT;
     // axios.defaults.withCredentials = true;
+
+    if (options.errorHandler) {
+      customErrorHandler = options.errorHandler;
+    }
 
     app.config.globalProperties.$http = axios;
     app.provide('http', axios);
